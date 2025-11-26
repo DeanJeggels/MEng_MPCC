@@ -1,0 +1,91 @@
+# # bringup_dir/config/icp_odometry.yaml
+# icp_odometry:
+#   ros__parameters:
+#     use_sim_time: true
+#     odom_frame_id: odom
+#     frame_id: base_link
+#     publish_tf: true
+#     approx_sync: false
+#     wait_for_transform: 0.2
+
+#     Odom/ScanKeyFrameThr: "0.4"
+#     OdomF2M/ScanSubtractRadius: "0.1"
+#     OdomF2M/ScanMaxSize: "15000"
+#     OdomF2M/BundleAdjustment: "false"
+#     Icp/CorrespondenceRatio: "0.01"
+
+#     Icp/PointToPlane: "true"
+#     Icp/Iterations: "10"
+#     Icp/VoxelSize: "0.1"
+#     Icp/Epsilon: "0.001"
+#     Icp/PointToPlaneK: "20"
+#     Icp/PointToPlaneRadius: "0"
+#     Icp/MaxTranslation: "3"
+#     Icp/MaxCorrespondenceDistance: "1.0"
+#     Icp/Strategy: "1"
+#     Icp/OutlierRatio: "0.7"
+#     Reg/Force3DoF: "true"
+
+# icp_odometry:
+#   ros__parameters:
+#     use_sim_time: true
+#     odom_frame_id: odom
+#     frame_id: base_link
+#     publish_tf: true
+    
+#     approx_sync: true
+#     wait_for_transform: 0.3  # Increased for transform stability
+    
+#     # Odometry tuning
+#     Odom/ScanKeyFrameThr: "0.3"  # More frequent keyframes
+#     OdomF2M/ScanSubtractRadius: "0.05"
+#     OdomF2M/ScanMaxSize: "15000"
+#     OdomF2M/BundleAdjustment: "false"
+#     Icp/CorrespondenceRatio: "0.05"  # ⬆️ Increased
+    
+#     # ICP settings optimized for 30° tilt
+#     Icp/PointToPlane: "true"
+#     Icp/Iterations: "25"                    # ⬆️ Increased
+#     Icp/VoxelSize: "0.07"                   # ⬇️ Decreased
+#     Icp/Epsilon: "0.0005"                   # ⬇️ Tighter convergence
+#     Icp/PointToPlaneK: "20"
+#     Icp/PointToPlaneRadius: "0"
+#     Icp/MaxTranslation: "2.0"               # ⬇️ More conservative
+#     Icp/MaxCorrespondenceDistance: "1.5"    # ⬆️ Increased
+#     Icp/Strategy: "1"
+#     Icp/OutlierRatio: "0.8"                 # ⬆️ More tolerant
+
+
+
+icp_odometry:
+  ros__parameters:
+    use_sim_time: true
+    # Frames/TF
+    odom_frame_id: odom
+    frame_id: base_link           # Typically the robot base frame        # Can be set to a stabilized fixed frame from IMU
+    publish_tf: true
+    # expected_update_rate: 10.0    # Slightly higher than scan rate
+
+    # General ROS IO
+    approx_sync: true
+    # wait_for_transform: 0.2
+
+    # Odometry tuning (from example)
+    Odom/ScanKeyFrameThr: "0.3"
+    OdomF2M/ScanSubtractRadius: "0.05"     # Will be overridden by voxel_size if desired
+    OdomF2M/ScanMaxSize: "15000"
+    OdomF2M/BundleAdjustment: "false"
+    Icp/CorrespondenceRatio: "0.05"
+
+    # ICP settings (shared with mapping in example)
+    Icp/PointToPlane: "true"
+    Icp/Iterations: "25"
+    Icp/VoxelSize: "0.07"                 # Example default; override per environment
+    Icp/Epsilon: "0.0005"
+    Icp/PointToPlaneK: "20"
+    Icp/PointToPlaneRadius: "0"
+    Icp/MaxTranslation: "2.0"
+    Icp/MaxCorrespondenceDistance: "1.5" # ~ voxel_size * 10, see example guideline
+    Icp/Strategy: "1"
+    Icp/OutlierRatio: "0.8"
+

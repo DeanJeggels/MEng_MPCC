@@ -1,0 +1,28 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 5
+    use_sim_time: true
+
+    diff_cont:
+      type: diff_drive_controller/DiffDriveController
+    
+    # This controller publishes the state of all resources registered to a hardware_interface::StateInterface to the topic sensor_msgs/msg/JointState
+    joint_broad:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+diff_cont:
+  ros__parameters:
+    use_sim_time: true
+    publish_rate: 5.0 # You can set this higher than the controller manager update rate, but it will be throttled
+    base_frame_id: base_link
+
+    left_wheel_names: ['left_wheel_joint']
+    right_wheel_names: ['right_wheel_joint']
+    wheel_radius: 0.05
+    wheel_separation: 0.35
+    # wheel_separation: 0.567
+    # wheel_radius: 0.1125
+    use_stamped_vel: false
+    odom_frame_id: odom
+    enable_odom_tf: false
+    cmd_vel_timeout: 0.5

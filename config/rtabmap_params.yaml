@@ -1,0 +1,184 @@
+# rtabmap:
+#   ros__parameters:
+#     use_sim_time: true
+
+#     # SLAM mode (build a new map)
+#     localization: false
+#     Mem/IncrementalMemory: "true"
+#     Mem/InitWMWithAllNodes: "false"
+#     map_always_update: true
+#     # Optional: set a writable path if saving maps between runs
+#     database_path: "/home/deanjeggs/new_ros2_ws/src/mpcc/maps/slam_session.db"
+
+#     # Sensor subscriptions (3D LiDAR via PointCloud2)
+#     subscribe_depth: false
+#     subscribe_rgb: false
+#     subscribe_scan: false
+#     subscribe_scan_cloud: true
+#     # scan_cloud_filtered: true
+
+#     # Sync and queues
+#     approx_sync: false
+#     topic_queue_size: 150
+#     sync_queue_size: 100
+
+#     # Frames and TF publishing
+#     frame_id: base_link
+#     map_frame_id: map
+#     odom_frame_id: odom
+#     publish_tf: true
+#     odom_sensor_sync: true
+
+#     # Registration/mapping for LiDAR-only SLAM
+#     Reg/Strategy: "1"                 # 1 = ICP
+#     Rtabmap/DetectionRate: "10"       # Hz: node creation rate
+#     Reg/Force3DoF: "true"
+
+#     # 3D occupancy grid parameters
+#     Grid/3D: "true"
+#     Grid/CellSize: "0.05"
+#     Grid/RangeMin: "0.1"
+#     Grid/RangeMax: "20.0"
+#     Grid/MaxObstacleHeight: "2.0"
+#     Grid/MaxGroundHeight: "0.2"
+#     Grid/MaxGroundAngle: "45"
+#     Grid/NormalK: "20"
+#     Grid/NormalRadius: "0"
+#     Grid/NormalSegmentation: "true"
+#     Grid/GroundIsObstacle: "false"
+#     Grid/Sensor: "1"
+
+#     # Optional SLAM stability/performance
+#     Kp/MaxFeatures: "-1"             # No visual features (pure LiDAR)
+#     RGBD/ProximityBySpace: "true"   # Spatial proximity loop proposals
+#     # RGBD/ProximityMaxGraphDepth: "50"
+
+# rtabmap:
+#   ros__parameters:
+#     use_sim_time: true
+    
+#     # LOCALIZATION MODE PARAMETERS
+#     # localization: true
+#     # Mem/IncrementalMemory: "false"
+#     # Mem/InitWMWithAllNodes: "true"
+#     # initial_pose: "0.222705 -0.162081 0.0 0.0 0.0  0.3700960527801269"  # x y z roll pitch yaw
+    
+
+#     # SLAM Mode
+#     localization: false
+#     Mem/IncrementalMemory: "true"
+#     Mem/InitWMWithAllNodes: "false"
+
+    
+#     # SENSOR SUBSCRIPTIONS
+#     subscribe_depth: false
+#     subscribe_rgb: false
+#     subscribe_scan: false
+#     subscribe_scan_cloud: true
+#     rgbd_cameras: 0
+    
+#     # TOPIC CONFIGURATION
+#     queue_size: 150
+#     sync_queue_size: 150
+#     topic_queue_size: 10
+#     approx_sync: true
+    
+#     # FRAME CONFIGURATION
+#     frame_id: base_link
+#     map_frame_id: map
+#     odom_frame_id: odom
+    
+#     # DATABASE CONFIGURATION
+#     database_path: "/home/deanjeggs/new_ros2_ws/src/mpcc/maps/slam_session2.db"
+    
+#     # SENSOR SYNC
+#     odom_sensor_sync: false
+    
+#     # MAPPING DISABLED
+#     map_always_update: false
+
+#     # MAPPING ENABLED
+#     # map_always_update: true
+
+#     # GRID PARAMETERS
+#     Grid/MaxGroundHeight: "0.113"   # Ignore the floor by limiting ground height
+#     Grid/MinGroundHeight: "0.0"  # Minimum height of the ground points
+#     Grid/MaxObstacleHeight: "1.5"
+#     Grid/sensor: "true"
+#     Rtabmap/DetectionRate: "20"
+#     Odom/Strategy: "1"
+#     Reg/Strategy: "1"
+#     Reg/Force3DoF: "true"
+
+#     # ICP/VoxelSize: "0.07"
+#     # ICP/MaxCorrespondenceDistance: "0.7"
+#     # ICP/PointToPlane: "true"
+#     # ICP/CorrespondenceRatio: "0.1"
+#     # ICP/MaxRotation: "0.5"
+#     # ICP/MaxTranslation: "0.5"
+
+
+rtabmap:
+  ros__parameters:
+    use_sim_time: true
+    
+    # LOCALIZATION MODE PARAMETERS
+    localization: true
+    Mem/IncrementalMemory: "false"
+    Mem/InitWMWithAllNodes: "true"
+    initial_pose: "0.0 0.0 0.0 0.0 0.0 0.3"  # x y z roll pitch yaw
+    
+
+    # # SLAM Mode
+    # localization: false
+    # Mem/IncrementalMemory: "true"
+    # Mem/InitWMWithAllNodes: "false"
+
+    
+    # SENSOR SUBSCRIPTIONS
+    subscribe_depth: false
+    subscribe_rgb: false
+    subscribe_scan: false
+    subscribe_scan_cloud: true
+    rgbd_cameras: 0
+    
+    # TOPIC CONFIGURATION
+    queue_size: 150
+    sync_queue_size: 150
+    topic_queue_size: 10
+    approx_sync: true
+    
+    # FRAME CONFIGURATION
+    frame_id: base_link
+    map_frame_id: map
+    odom_frame_id: odom
+    
+    # DATABASE CONFIGURATION
+    database_path: "/home/deanjeggs/new_ros2_ws/src/mpcc/maps/slam_session.db"
+    
+    # SENSOR SYNC
+    odom_sensor_sync: false
+    
+    # MAPPING DISABLED
+    map_always_update: false
+
+    # MAPPING ENABLED
+    # map_always_update: true
+
+    # GRID PARAMETERS
+    Grid/MaxGroundHeight: "0.15"   # Ignore the floor by limiting ground height
+    Grid/MinGroundHeight: "0.0"  # Minimum height of the ground points
+    Grid/MaxObstacleHeight: "1.5"
+    Grid/sensor: "true"
+    Rtabmap/DetectionRate: "30"
+    Odom/Strategy: "1"
+    Reg/Strategy: "1"
+    Reg/Force3DoF: "true"
+
+    # ICP/VoxelSize: "0.07"
+    # ICP/MaxCorrespondenceDistance: "0.7"
+    # ICP/PointToPlane: "true"
+    # ICP/CorrespondenceRatio: "0.1"
+    # ICP/MaxRotation: "0.5"
+    # ICP/MaxTranslation: "0.5"
+  

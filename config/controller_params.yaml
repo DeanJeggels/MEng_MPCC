@@ -1,0 +1,22 @@
+mpcc_controller:
+  ros__parameters:
+    # Path to trajectory file
+    trajectory_file: "/home/deanjeggs/new_ros2_ws/src/mpcc/racetracks/aut_centerline.csv"
+    
+    # Controller parameters
+    control_frequency: 10.0
+    prediction_horizon: 10
+    
+    # MPCC cost function weights
+    q_contour: 1.0    # Weight for contouring error
+    q_lag: 0.5        # Weight for lag error
+    q_progress: 0.1   # Weight for maximizing progress
+    q_v: 0.1          # Weight for linear velocity regulation
+    q_omega: 0.1      # Weight for angular velocity regulation
+    q_v_s: 0.1        # Weight for progress velocity regulation
+    
+    # Control limits
+    v_ref: 0.2        # Reference linear velocity
+    v_max: 0.5        # Maximum linear velocity
+    omega_max: 1.0    # Maximum angular velocity
+    v_s_max: 0.5      # Maximum progress velocity

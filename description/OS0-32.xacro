@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="OS0-32">
+  <xacro:property name="M_PI" value="3.1415926535897931" />
+  <xacro:macro name="OS0-32" params="*origin parent:=base_link name:=ouster tf_prefix:='' topic:=/ouster_points hz:=10 lasers:=32 samples:=1024 min_range:=0.5 max_range:=35.0 noise:=0.02 min_angle:=-${M_PI} max_angle:=${M_PI} gpu:=false">
+
+    <link name="${name}_base_link">
+      <inertial>
+        <mass value="0.5"/>
+        <origin xyz="0 0 0.037"/>
+        <inertia ixx="${(0.5 * (3.0*0.0435*0.0435 + 0.074*0.074)) / 12.0}" ixy="0" ixz="0" iyy="${(0.5 * (3.0*0.0435*0.0435 + 0.074*0.074)) / 12.0}" iyz="0" izz="${0.5 * 0.5 * (0.0435*0.0435)}"/>
+      </inertial>
+      <visual>
+        <geometry>
+          <mesh filename="file://$(find mpcc)/meshes/OS0_32.dae" />
+        </geometry>
+      </visual>
+      <collision>
+        <origin rpy="0 0 0" xyz="0 0 0.037"/>
+        <geometry>
+          <cylinder radius="0.0435" length="0.074"/>
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${name}_base_mount_joint" type="fixed">
+      <xacro:insert_block name="origin" />
+      <parent link="${parent}"/>
+      <child link="${name}_base_link"/>
+    </joint>
+
+    <gazebo reference="${name}_base_link">
+      <xacro:if value="${gpu}">
+        <sensor type="gpu_ray" name="OS0-32-sensor">
+          <always_on>true</always_on>
+          <pose>0 0 0.0382 0 0 0</pose>
+          <visualize>false</visualize>
+          <update_rate>${hz}</update_rate>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>${samples}</samples>
+                <resolution>1</resolution>
+                <min_angle>${min_angle}</min_angle>
+                <max_angle>${max_angle}</max_angle>
+              </horizontal>
+              <vertical>
+                <samples>${lasers}</samples>
+                <resolution>1</resolution>
+                <min_angle>-${45.0*M_PI/180.0}</min_angle>
+                <max_angle> ${45.0*M_PI/180.0}</max_angle>
+              </vertical>
+            </scan>
+            <range>
+              <min>${min_range}</min>
+              <max>${max_range+1}</max>
+              <resolution>0.001</resolution>
+            </range>
+            <noise>
+              <type>gaussian</type>
+              <mean>0.0</mean>
+              <stddev>${noise}</stddev>
+            </noise>
+          </ray>
+          <plugin name="pc2" filename="libgazebo_ros_ray_sensor.so">
+            <ros>
+              <!-- <namespace>/ouster</namespace>
+              <remapping>~/out:=points</remapping> -->
+              <namespace></namespace>
+              <remapping>~/out:=scan_cloud</remapping>
+            </ros>
+            <output_type>sensor_msgs/PointCloud2</output_type>
+            <frame_name>${name}_base_link</frame_name>
+          </plugin>
+        </sensor>
+      </xacro:if>
+      <xacro:unless value="${gpu}">
+        <sensor type="ray" name="OS0-32-sensor">
+          <always_on>true</always_on>
+          <pose>0 0 0.0382 0 0 0</pose>
+          <visualize>false</visualize>
+          <update_rate>${hz}</update_rate>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>${samples}</samples>
+                <resolution>1</resolution>
+                <min_angle>${min_angle}</min_angle>
+                <max_angle>${max_angle}</max_angle>
+              </horizontal>
+              <vertical>
+                <samples>${lasers}</samples>
+                <resolution>1</resolution>
+                <min_angle>-${45.0*M_PI/180.0}</min_angle>
+                <max_angle> ${45.0*M_PI/180.0}</max_angle>
+              </vertical>
+            </scan>
+            <range>
+              <min>${min_range}</min>
+              <max>${max_range+1}</max>
+              <resolution>0.001</resolution>
+            </range>
+            <noise>
+              <type>gaussian</type>
+              <mean>0.0</mean>
+              <stddev>${noise}</stddev>
+            </noise>
+          </ray>
+          <plugin name="pc2" filename="libgazebo_ros_ray_sensor.so">
+            <ros>
+              <!-- <namespace>/ouster</namespace>
+              <remapping>~/out:=points</remapping> -->
+              <namespace></namespace>
+              <remapping>~/out:=scan_cloud</remapping>
+            </ros>
+            <output_type>sensor_msgs/PointCloud2</output_type>
+            <frame_name>${name}_base_link</frame_name>
+          </plugin>
+        </sensor>
+      </xacro:unless>
+    </gazebo>
+
+  </xacro:macro>
+</robot>

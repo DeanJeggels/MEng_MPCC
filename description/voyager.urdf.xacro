@@ -1,0 +1,400 @@
+<?xml version="1.0"?>
+<robot name="voyager" xmlns:xacro="https://ros.org/wiki/xacro">
+
+    <!-- <xacro:include filename="$(find voyager_bringup)/urdf/VLP16.xacro" /> -->
+    <xacro:include filename="$(find mpcc)/description/OS0-32.xacro" />
+    <xacro:include filename="$(find mpcc)/description/voyager_gazebo.xacro" />
+
+    <xacro:property name="frame_mass" value="32.9" />
+    <xacro:property name="cover_mass" value="1.1" />
+
+    <xacro:property name="length" value="0.49" />
+    <xacro:property name="width" value="0.45" />
+    <xacro:property name="height" value="0.27" />
+    <xacro:property name="cover_length" value="0.7863" />
+    <xacro:property name="cover_width" value="0.6078" />
+    <xacro:property name="cover_height" value="0.2907" />
+    <xacro:property name="cover_x_offset" value="-0.11" />
+    <xacro:property name="cover_y_offset" value="0.0" />
+    <xacro:property name="cover_z_offset" value="0.01" />
+    <xacro:property name="front_track_width" value="0.567" />
+    <xacro:property name="rear_track_width" value="0.364" />
+    <xacro:property name="wheelbase" value="0.333" />
+    <xacro:property name="front_wheel_mass" value="1.335" />
+    <xacro:property name="front_wheel_width" value="0.074" />
+    <xacro:property name="front_wheel_radius" value="0.1125" />
+    <xacro:property name="rear_wheel_radius" value="0.062" />
+    <xacro:property name="rear_wheel_mass" value="0.8" />
+    <xacro:property name="rear_wheel_width" value="0.0355" />
+    <xacro:property name="caster_offset" value="0.0447" />
+    <xacro:property name="caster" value="0.0303" />
+    <xacro:property name="caster_height" value="0.0925" />
+    <xacro:property name="steering_plate_width" value="0.1" />
+    <xacro:property name="steering_plate_length" value="0.1" />
+    <xacro:property name="steering_plate_height" value="0.008" />
+    <xacro:property name="steering_plate_mass" value="0.1" />
+    <xacro:property name="steering_min" value="${-pi}" />
+    <xacro:property name="steering_max" value="${pi}" />
+
+    <!-- Velodyne position relative to body_link (which is at the center of voyager) -->
+    <xacro:property name="velodyne_x" value="0.131" />
+    <xacro:property name="velodyne_y" value="0" />
+    <xacro:property name="velodyne_z" value="0.289" />
+    <xacro:property name="velodyne_pitch" value="${13*pi/180}" />
+
+    <xacro:property name="imu_x" value="-0.253" />
+    <xacro:property name="imu_y" value="0" />
+    <xacro:property name="imu_z" value="-0.025" />
+
+    <xacro:property name="camera_x" value="0.155" />
+    <xacro:property name="camera_y" value="0.0" />
+    <xacro:property name="camera_z" value="0.2626" />
+    <xacro:property name="camera_mass" value="0.11" />
+    <xacro:property name="camera_length" value="0.02" />
+    <xacro:property name="camera_radius" value="0.01" />
+
+    <!--Inertial macros for the box and cylinder. Units are kg*m^2-->
+    <xacro:macro name="cylinder_inertia" params="m r h">
+        <inertia ixx="${m*(3*r*r+h*h)/12}" ixy = "0" ixz = "0" iyy="${m*(3*r*r+h*h)/12}" iyz = "0" izz="${m*r*r/2}" />
+    </xacro:macro>
+    <xacro:macro name="box_inertia" params="m x y z">
+        <inertia ixx="${m*(z*z+y*y)/12}" ixy = "0" ixz = "0" iyy="${m*(x*x+z*z)/12}" iyz = "0" izz="${m*(x*x+y*y)/12}" />
+    </xacro:macro>
+
+    <!-- Dummy base link because base link cannot have inertia -->
+    <link name="base_link">
+    </link>
+
+    <link name="body_link">
+        <inertial>
+            <mass value="${frame_mass}" />
+            <origin xyz="-0.1 0 ${height/2}" rpy="0 0 0" />
+            <xacro:box_inertia m="${frame_mass}" x="${length}" y="${width}" z="${height}"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 ${pi}" />
+            <geometry>
+                <mesh filename="file://$(find mpcc)/meshes/sim_voyager_body.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 ${pi}" />
+            <geometry>
+                <mesh filename="file://$(find mpcc)/meshes/sim_voyager_body.dae"/>
+            </geometry>
+        </collision>
+    </link>
+    <joint name="base_link_joint" type="fixed">
+        <origin  xyz="0 0 ${front_wheel_radius}" rpy="0 0 0"/>
+        <parent link="base_link" />
+        <child link="body_link" />
+    </joint>
+
+    <link name="imu_link" >
+        <inertial>
+            <mass value="0.009"/>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <xacro:box_inertia m="0.009" x="0.028" y="0.0315" z="0.013"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0.0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="file://$(find mpcc)/meshes/IMU.stl"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0.0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="file://$(find mpcc)/meshes/IMU.stl"/>
+            </geometry>
+        </collision>
+    </link>
+    <joint name="imu_joint" type="fixed">
+        <origin rpy="0 0 0" xyz="${imu_x} ${imu_y} ${imu_z}" />
+        <parent link="body_link" />
+        <child link="imu_link" />
+    </joint>
+
+    <link name="cover_link">
+        <inertial>
+            <mass value="${cover_mass}" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <xacro:box_inertia m="${cover_mass}" x="${cover_length}" y="${cover_width}" z="${cover_height}"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="file://$(find mpcc)/meshes/sim_voyager_cover.dae"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="file://$(find mpcc)/meshes/sim_voyager_cover.dae"/>
+            </geometry>
+        </collision>
+    </link>
+    <joint name="cover_link_joint" type="fixed">
+        <origin  xyz="${cover_x_offset} ${cover_y_offset} ${cover_z_offset}" rpy="0 0 0"/>
+        <parent link="body_link" />
+        <child link="cover_link" />
+    </joint>
+
+    <link name="camera_link">
+        <inertial>
+            <mass value="${camera_mass}"/>
+            <origin xyz="0 0 0" rpy="0 ${pi/2} 0" />
+            <xacro:cylinder_inertia m="${camera_mass}" r="${camera_radius}" h="${camera_length}"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 ${pi/2} 0" />
+            <geometry>
+                <cylinder radius="${camera_radius}" length="${camera_length}"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 ${pi/2} 0" />
+            <geometry>
+                <cylinder radius="${camera_radius}" length="${camera_length}"/>
+            </geometry>
+        </collision>
+    </link>
+    <joint name="camera_link_joint" type="fixed">
+        <origin  xyz="${camera_x} ${camera_y} ${camera_z}" rpy="0 0 0"/>
+        <parent link="body_link" />
+        <child link="camera_link" />
+    </joint>
+    
+    <link name="front_left_wheel_link">
+        <inertial>
+            <mass value="${front_wheel_mass}"/>
+            <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+            <xacro:cylinder_inertia m="${front_wheel_mass}" r="${front_wheel_radius}" h="${front_wheel_width}"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+            <geometry>
+                <cylinder radius="${front_wheel_radius}" length="${front_wheel_width}"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+            <geometry>
+                <cylinder radius="${front_wheel_radius}" length="${front_wheel_width}"/>
+            </geometry>
+        </collision>
+    </link>
+    <joint name="front_left_wheel_joint" type="continuous">
+        <origin rpy="0 0 0" xyz="0 ${front_track_width/2} 0.0" />
+        <parent link="body_link" />         
+        <child link="front_left_wheel_link" />
+        <axis xyz="0 1 0"/>
+        <dynamics damping="2.5" friction="0.5"/> 
+    </joint>
+
+    <link name="front_right_wheel_link">
+        <inertial>
+            <mass value="${front_wheel_mass}"/>
+            <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+            <xacro:cylinder_inertia m="${front_wheel_mass}" r="${front_wheel_radius}" h="${front_wheel_width}"/>
+        </inertial>        
+        <visual>
+            <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+            <geometry>
+                <cylinder radius="${front_wheel_radius}" length="${front_wheel_width}"/>
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0.0 0" rpy="${pi/2} 0 0" />
+            <geometry>
+                <cylinder radius="${front_wheel_radius}" length="${front_wheel_width}"/>
+            </geometry>
+        </collision>
+    </link>
+    <joint name="front_right_wheel_joint" type="continuous">
+        <origin rpy="0 0 0" xyz="0 ${-front_track_width/2} 0.0" />
+        <parent link="body_link" />
+        <child link="front_right_wheel_link" />
+        <axis xyz="0 1 0"/>
+        <dynamics damping="2.5" friction="0.5"/> 
+    </joint>
+
+    <link name="rear_right_caster_link">
+        <inertial>
+            <mass value="${steering_plate_mass}"/>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <xacro:box_inertia m="${steering_plate_mass}" x="${steering_plate_length}" y="${steering_plate_width}" z="${steering_plate_height}"/>
+        </inertial>        
+        <visual>
+            <origin xyz="0 0.0 0" rpy="0 0 0" />  
+           <geometry>
+                <box size="${steering_plate_length} ${steering_plate_width} ${steering_plate_height}"/>
+            </geometry>
+            <material name="Grey">
+                <color rgba="0.7 0.7 0.7 1.0"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0.0 0" rpy="0 0 0" />
+           <geometry>
+                <box size="${steering_plate_length} ${steering_plate_width} ${steering_plate_height}"/>
+            </geometry>
+        </collision>
+    </link>
+    <joint name="rear_right_caster_joint" type="continuous">
+        <origin rpy="0 0 0" xyz="${-wheelbase} ${-rear_track_width/2} ${caster_offset}" />
+        <parent link="body_link" />
+        <child link="rear_right_caster_link" />
+        <axis xyz="0 0 1"/>
+        <dynamics damping="2.5" friction="0.1"/> 
+    </joint>
+
+    <link name="rear_left_caster_link">
+        <inertial>
+            <mass value="${steering_plate_mass}"/>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <xacro:box_inertia m="${steering_plate_mass}" x="${steering_plate_length}" y="${steering_plate_width}" z="${steering_plate_height}"/>
+        </inertial>        
+        <visual>
+            <origin xyz="0 0.0 0" rpy="0 0 0" />  
+           <geometry>
+                <box size="${steering_plate_length} ${steering_plate_width} ${steering_plate_height}"/>
+            </geometry>
+            <material name="Grey">
+                <color rgba="0.7 0.7 0.7 1.0"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0.0 0" rpy="0 0 0" />
+           <geometry>
+                <box size="${steering_plate_length} ${steering_plate_width} ${steering_plate_height}"/>
+            </geometry>
+        </collision>
+    </link>
+    <joint name="rear_left_caster_joint" type="continuous">
+        <origin rpy="0 0 0" xyz="${-wheelbase} ${rear_track_width/2} ${caster_offset}" />
+        <parent link="body_link" />
+        <child link="rear_left_caster_link" />
+        <axis xyz="0 0 1"/>
+        <dynamics damping="2.5" friction="0.1"/> 
+    </joint>
+
+    <link name="rear_left_wheel_link">
+        <inertial>
+            <mass value="${rear_wheel_mass}"/>
+            <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+            <xacro:cylinder_inertia m="${rear_wheel_mass}" r="${rear_wheel_radius}" h="${rear_wheel_width}"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="${pi/2} 0 0" />  
+            <geometry>
+                <cylinder radius="${rear_wheel_radius}" length="${rear_wheel_width}"/>
+            </geometry>
+            <material name="Charcoal">
+                <color rgba="0.2 0.2 0.2 1.0"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+            <geometry>
+                <cylinder radius="${rear_wheel_radius}" length="${rear_wheel_width}"/>
+            </geometry>
+        </collision>
+    </link>
+    <joint name="rear_left_wheel_joint" type="continuous">
+        <origin rpy="0 0 0" xyz="${caster} 0 ${-caster_height}" />
+        <parent link="rear_left_caster_link" />         
+        <child link="rear_left_wheel_link" />
+        <axis xyz="0 1 0"/>
+        <dynamics damping="2.5" friction="0.1"/> 
+    </joint>
+
+    <link name="rear_right_wheel_link">
+        <inertial>
+            <mass value="${rear_wheel_mass}"/>
+            <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+            <xacro:cylinder_inertia m="${rear_wheel_mass}" r="${rear_wheel_radius}" h="${rear_wheel_width}"/>
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="${pi/2} 0 0" />  
+            <geometry>
+                <cylinder radius="${rear_wheel_radius}" length="${rear_wheel_width}"/>
+            </geometry>
+            <material name="Charcoal">
+                <color rgba="0.2 0.2 0.2 1.0"/>
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+            <geometry>
+                <cylinder radius="${rear_wheel_radius}" length="${rear_wheel_width}"/>
+            </geometry>
+        </collision>
+    </link>
+    <joint name="rear_right_wheel_joint" type="continuous">
+        <origin rpy="0 0 0" xyz="${caster} 0 ${-caster_height}" />
+        <parent link="rear_right_caster_link" />         
+        <child link="rear_right_wheel_link" />
+        <axis xyz="0 1 0"/>
+        <dynamics damping="2.5" friction="0.1"/> 
+    </joint>
+
+    <!-- <xacro:VLP-16 parent="body_link" name="velodyne" topic="/velodyne_points" organize_cloud="true" hz="10" samples="440" gpu="true">
+        <origin xyz="${velodyne_x} ${velodyne_y} ${velodyne_z}" rpy="0 ${velodyne_pitch} 0" />
+    </xacro:VLP-16> -->
+    <xacro:OS0-32 parent="body_link" name="ouster" hz="10" min_range="0.8" gpu="true">
+        <origin xyz="${velodyne_x} ${velodyne_y} ${velodyne_z}" rpy="0 ${velodyne_pitch} 0" />
+    </xacro:OS0-32>
+
+    <ros2_control name="GazeboSystem" type="system">
+        <hardware>
+            <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+        </hardware>
+            <!-- <ros>
+
+                <remapping>~/cmd_vel_unstamped:=/cmd_vel</remapping>
+                <remapping>~/odom:=/odom</remapping>
+
+            </ros> -->
+        <joint name="rear_left_caster_joint">
+            <state_interface name="effort"/>
+            <state_interface name="velocity"/>
+        </joint> 
+        <joint name="rear_right_caster_joint">
+            <state_interface name="effort"/>
+            <state_interface name="velocity"/>
+        </joint> 
+        <joint name="rear_left_wheel_joint">
+            <state_interface name="effort"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="rear_right_wheel_joint">
+            <state_interface name="effort"/>
+            <state_interface name="velocity"/>
+        </joint>
+        <joint name="front_left_wheel_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+
+            <state_interface name="position" />  
+            <state_interface name="velocity" />
+        </joint>
+        <joint name="front_right_wheel_joint">
+            <command_interface name="velocity">
+                <param name="min">-10</param>
+                <param name="max">10</param>
+            </command_interface>
+            <state_interface name="position" />  
+            <state_interface name="velocity" />
+        </joint>
+    </ros2_control>
+
+    <gazebo>
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+            <parameters>$(find mpcc)/config/my_controllers.yaml</parameters>
+        </plugin>
+    </gazebo>
+
+</robot>

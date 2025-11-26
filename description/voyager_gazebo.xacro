@@ -1,0 +1,191 @@
+<?xml version="1.0"?>
+<robot>
+
+  <gazebo reference="imu_link">
+    <material>Gazebo/Red</material>
+    <sensor name="imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>10</update_rate>
+      <imu>
+        <angular_velocity>
+          <x>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>0.00279</stddev>
+            </noise>
+          </x>
+          <y>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>0.00279</stddev>
+            </noise>
+          </y>
+          <z>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>0.00279</stddev>
+            </noise>
+          </z>
+        </angular_velocity>
+        <linear_acceleration>
+          <x>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>0.00134</stddev>
+              <bias_mean>0.0</bias_mean>
+              <bias_stddev>0.00001</bias_stddev>
+            </noise>
+          </x>
+          <y>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>0.00134</stddev>
+              <bias_mean>0.0</bias_mean>
+              <bias_stddev>0.00001</bias_stddev>
+            </noise>
+          </y>
+          <z>
+            <noise type="gaussian">
+              <mean>0.0</mean>
+              <stddev>0.00134</stddev>
+              <bias_mean>0.0</bias_mean>
+              <bias_stddev>0.000015</bias_stddev>
+            </noise>
+          </z>
+        </linear_acceleration>
+      </imu>
+      <plugin name="bytes_imu" filename="libgazebo_ros_imu_sensor.so">
+        <ros>
+          <namespace>imu</namespace>
+          <remapping>~/out:=data</remapping>
+        </ros>
+        <initial_orientation_as_reference>false</initial_orientation_as_reference>
+        <frame_name>imu_link</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- <gazebo reference="base_link">
+    <inertial>
+      <mass>0.001</mass>
+      <inertia>
+        <ixx>1</ixx>
+        <ixy>0</ixy>
+        <ixz>0</ixz>
+        <iyy>1</iyy>
+        <iyz>0</iyz>
+        <izz>1</izz>
+      </inertia>
+    </inertial>
+  </gazebo> -->
+
+  <gazebo reference="body_link">
+    <material>Gazebo/Blue</material>    
+  </gazebo>
+
+
+  <gazebo reference="front_left_wheel_link">
+    <material>Gazebo/Black</material>
+    <mu1 value="0.85"/>
+    <mu2 value="0.85"/>
+    <!-- <kp value="5e+5" /> -->
+    <!-- <kd value="1.0" /> -->
+    <!-- <fdir1 value="1 0 0"/> -->
+  </gazebo>
+
+  <gazebo reference="front_right_wheel_link">
+    <material>Gazebo/Black</material>
+    <mu1 value="0.85"/>
+    <mu2 value="0.85"/>
+    <!-- <kp value="5e+5" /> -->
+    <!-- <kd value="1.0" /> -->
+    <!-- <fdir1 value="1 0 0"/> -->
+  </gazebo>
+
+  <gazebo reference="rear_right_wheel_link">
+    <material>Gazebo/Black</material>
+    <mu1 value="0.001"/>
+    <mu2 value="0.001"/>
+    <!-- <kp value="2.5e+5" /> -->
+    <!-- <kd value="1.0" /> -->
+    <!-- <fdir1 value="1 0 0"/> -->
+  </gazebo>
+
+  <gazebo reference="rear_left_wheel_link">
+    <material>Gazebo/Black</material>
+    <mu1 value="0.001"/>
+    <mu2 value="0.001"/>
+    <!-- <kp value="2.5e+5" /> -->
+    <!-- <kd value="1.0" /> -->
+    <!-- <fdir1 value="1 0 0"/> -->
+  </gazebo>
+
+  <gazebo>
+    <plugin name='diff_drive' filename='libgazebo_ros_diff_drive.so'>
+
+       
+        <left_joint>front_left_wheel_joint</left_joint>
+        <right_joint>front_right_wheel_joint</right_joint>
+
+   
+        <wheel_separation>0.567</wheel_separation>
+        <wheel_diameter>0.225</wheel_diameter>
+
+       
+        <max_wheel_torque>35</max_wheel_torque>
+        <max_wheel_acceleration>10.0</max_wheel_acceleration>
+
+        
+        <publish_odom>true</publish_odom>
+        <publish_odom_tf>true</publish_odom_tf>
+        <publish_wheel_tf>true</publish_wheel_tf>
+
+        <odometry_frame>odom</odometry_frame>
+        <robot_base_frame>base_link</robot_base_frame>
+
+      </plugin>
+    </gazebo>
+
+  <!-- camera -->
+  <gazebo reference="camera_link">
+    <material>Gazebo/Red</material>
+    <sensor type="camera" name="web_camera">
+      <update_rate>30.0</update_rate>
+      <camera name="webcam">
+        <horizontal_fov>1.2217</horizontal_fov>
+        <image>
+          <width>1920</width>
+          <height>1080</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.02</near>
+          <far>50</far>
+        </clip>
+        <noise>
+          <type>gaussian</type>
+          <!-- Noise is sampled independently per pixel on each frame.
+               That pixel's noise value is added to each of its color
+               channels, which at that point lie in the range [0,1]. -->
+          <mean>0.0</mean>
+          <stddev>0.009</stddev>
+        </noise>
+      </camera>
+      <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>0.0</updateRate>
+        <cameraName>camera_node</cameraName>
+        <imageTopicName>image_raw</imageTopicName>
+        <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+        <frameName>camera_link</frameName>
+        <hackBaseline>0.07</hackBaseline>
+        <distortionK1>0.0</distortionK1>
+        <distortionK2>0.0</distortionK2>
+        <distortionK3>0.0</distortionK3>
+        <distortionT1>0.0</distortionT1>
+        <distortionT2>0.0</distortionT2>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+</robot>
