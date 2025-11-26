@@ -1,0 +1,25 @@
+Statistic,Value
+Configuration,PH15-CH15
+Prediction Horizon,15
+Control Horizon,15
+Sample Count,814
+Mean (ms),8886.322
+Median (ms),9379.800
+Standard Deviation (ms),2756.898
+Minimum (ms),844.567
+Maximum (ms),13582.200
+Q1 (25th Percentile) (ms),7083.573
+Q3 (75th Percentile) (ms),11257.850
+Interquartile Range (IQR) (ms),4174.278
+95th Percentile (ms),12000.565
+99th Percentile (ms),12560.726
+Range (ms),12737.633
+Coefficient of Variation (%),31.0
+Convergence Rate (%),100.0
+5Hz Target Frequency (Hz),5.0
+5Hz Constraint (ms),200.0
+5Hz Feasible Count (≤100ms),0
+5Hz Feasible Rate (%),0.0
+50ms Feasible Count,0
+50ms Feasible Rate (%),0.0
+5Hz Suitability Assessment,POOR

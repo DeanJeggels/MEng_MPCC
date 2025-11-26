@@ -1,0 +1,25 @@
+Statistic,Value
+Configuration,PH3-CH3
+Prediction Horizon,3
+Control Horizon,3
+Sample Count,814
+Mean (ms),54.087
+Median (ms),34.480
+Standard Deviation (ms),62.020
+Minimum (ms),1.278
+Maximum (ms),688.951
+Q1 (25th Percentile) (ms),19.364
+Q3 (75th Percentile) (ms),62.696
+Interquartile Range (IQR) (ms),43.332
+95th Percentile (ms),172.232
+99th Percentile (ms),303.848
+Range (ms),687.673
+Coefficient of Variation (%),114.7
+Convergence Rate (%),100.0
+5Hz Target Frequency (Hz),5.0
+5Hz Constraint (ms),200.0
+5Hz Feasible Count (≤100ms),781
+5Hz Feasible Rate (%),95.9
+50ms Feasible Count,539
+50ms Feasible Rate (%),66.2
+5Hz Suitability Assessment,EXCELLENT

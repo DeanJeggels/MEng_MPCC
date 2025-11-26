@@ -1,0 +1,25 @@
+Statistic,Value
+Configuration,PH8-CH8
+Prediction Horizon,8
+Control Horizon,8
+Sample Count,814
+Mean (ms),1596.531
+Median (ms),1153.135
+Standard Deviation (ms),1201.434
+Minimum (ms),108.649
+Maximum (ms),3669.580
+Q1 (25th Percentile) (ms),521.743
+Q3 (75th Percentile) (ms),3141.773
+Interquartile Range (IQR) (ms),2620.029
+95th Percentile (ms),3380.210
+99th Percentile (ms),3491.807
+Range (ms),3560.931
+Coefficient of Variation (%),75.3
+Convergence Rate (%),100.0
+5Hz Target Frequency (Hz),5.0
+5Hz Constraint (ms),200.0
+5Hz Feasible Count (≤100ms),36
+5Hz Feasible Rate (%),4.4
+50ms Feasible Count,0
+50ms Feasible Rate (%),0.0
+5Hz Suitability Assessment,POOR
